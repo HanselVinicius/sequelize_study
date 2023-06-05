@@ -14,7 +14,6 @@ router.get("/users",async(req,res)=>{
         const result = await dao.find_all()
         console.log(result)
         res.status(200).send(result)
-        db.close_connection()
 
     }catch (err) {
         res.status(500).json({message:err.message});
@@ -24,10 +23,15 @@ router.get("/users",async(req,res)=>{
 
 router.post("/users",async(req,res)=>{
     try {
+
+        if(req.body['nome'] == "" || req.body['idade'] == ""|| 
+         req.body['nome'] === undefined || req.body['idade'] === undefined ){
+            res.status(500).json({message:"DADOS INVALIDOS"})
+        }
+
         db.start_connection()
         let result = await dao.insert(req.body['nome'],req.body['idade'])
-        res.status(201)
-        db.close_connection()
+        res.status(201).json(result)
 
     } catch (err) {
         res.status(500).json({message:err.message});
@@ -40,8 +44,7 @@ router.put("/users/:id",async(req,res)=>{
         const id = req.params.id
         db.start_connection()
         const result = await dao.update(id,req.body["nome"],req.body["idade"])
-        res.status(201).json(result) 
-        db.close_connection()
+        res.status(202).json(result) 
   
     } catch (err) {
         res.status(500).json({message:err.message});
@@ -52,6 +55,22 @@ router.put("/users/:id",async(req,res)=>{
 
 
 })
+
+
+router.delete("/users/:id",async (req,res)=>{
+    try {
+        const id = req.params.id
+        console.log(id)
+        db.start_connection()
+        const result = await dao.delete(id)
+        res.status(202).json(result)
+
+    } catch (err) {
+        res.status(500).json({message:err.message});
+        db.close_connection()
+    }
+})
+
 
 
 

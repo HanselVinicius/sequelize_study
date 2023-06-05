@@ -31,10 +31,10 @@ async insert(p_nome,p_idade){
 async update(id,p_nome,p_idade){
     try{
 
-        const item = await User.findByPk(id)
+        const user = await User.findByPk(id)
 
-        if (!item) {
-            return res.status(404).json({ message: 'User not found' });
+        if (!user) {
+            return {message:'USUARIO NAO ENCONTRADO'};
           }
 
         let user_updated = await User.update({
@@ -46,8 +46,25 @@ async update(id,p_nome,p_idade){
 
         return user_updated  
     }catch(error){
-        console.log(`ERROR IN INSERTION ${error}`)
+        console.log(`ERROR IN UPDATE ${error}`)
     }
+}
+
+
+async delete(id){
+    try{
+    const user = await User.findByPk(id)
+
+    if (!user) {
+        return {message:'USUARIO NAO ENCONTRADO'};
+    }
+    let result = await User.destroy({
+        where:{id:id}
+    })
+    return result
+}catch(error){
+    console.log(`ERROR IN DELETE ${error}`)
+}
 }
 
 
